@@ -1,0 +1,75 @@
+@page "/search/{SearchKey}"
+@inject IUserSearchService SearchService
+@inject NavigationManager NavigationManager
+@using GoogleClone.Shared.Models
+
+<div class="container mb-5">
+    <div class="row d-flex justify-content-start">
+        @* Right *@
+        <div class="col-sm-8">
+            <div>
+                <SearchForm NewSearch="SearchDto" SubmitValidForm="Search" HideButtons="HideButtons" />
+            </div>
+            <div class="mt-3">
+                @if (Results != null)
+                {
+                    @foreach (var res in Results)
+                    {
+                        <div class="card bg-dark shadow-sm border-0 mb-2">
+                            <div class="card-body">
+                                <div @onclick="@(() => NavigationManager.NavigateTo(res.Url, true))">
+                                    <small><a class="text-decoration-none text-light" href="@res.Url">@res.Url</a></small>
+                                    <h4 class="card-title">
+                                        <a href="@res.Url" class="text-decoration-none card-link">@res.Title</a>
+                                    </h4>
+                                </div>
+                                <small class="card-text">@res.Description.Truncate(150)</small>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading ... </span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @* Left *@
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+    
+
+@code
+{
+    public ResultObject[]? Results = null;
+    [Parameter] public string? SearchKey { get; set; }
+    public SearchDto SearchDto { get; set; } = new SearchDto();
+    public bool HideButtons = true;
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(SearchKey))
+        {
+            SearchDto.searchKey = SearchKey!;
+            Results = await SearchService.GetSearchResults(SearchKey!);
+        }
+
+    }
+
+    void Search()
+    {
+        if (SearchKey!.ToLower() != SearchDto.searchKey.ToLower())
+        {
+            SearchKey = SearchDto.searchKey;
+            NavigationManager.NavigateTo($"/search/{SearchKey}", true);
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/search/{SearchKey}");
+        }
+    }
+}

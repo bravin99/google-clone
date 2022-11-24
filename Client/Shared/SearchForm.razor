@@ -1,0 +1,31 @@
+@using GoogleClone.Shared.Models
+
+<EditForm Model="@NewSearch" OnValidSubmit="SubmitValidForm">
+    <DataAnnotationsValidator />
+    <div class="row mb-3">
+        <div class="mb-3">
+            <InputText @bind-Value="NewSearch.searchKey" class="form-control border-success bg-dark text-light" />
+        </div>
+    </div>
+    <span class="form-text">
+        <ValidationMessage For="@(() => NewSearch.searchKey)" />
+    </span>
+    @if (!HideButtons)
+    {
+        <div class="row mb-3 d-flex justify-content-center">
+            <div class="col-sm-3 d-grid offset-sm-0 mb-2">
+                <button type="submit" class="btn btn-dark">Google Search</button>
+            </div>
+            <div class="col-sm-3 d-grid offset-sm-0 mb-2">
+                <a href="#ifeellucky" type="button" class="btn btn-dark text-decoration-none">Feeling Lucky</a>
+            </div>
+        </div>
+    }
+</EditForm>
+
+@code
+{
+    [Parameter] public SearchDto NewSearch { get; set; } = new SearchDto();
+    [Parameter] public EventCallback SubmitValidForm { get; set; }
+    [Parameter] public bool HideButtons { get; set; } = false;
+}

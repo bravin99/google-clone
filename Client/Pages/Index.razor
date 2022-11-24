@@ -1,0 +1,24 @@
+﻿@page "/"
+@inject IUserSearchService SearchService
+@inject NavigationManager NavigationManager
+@using GoogleClone.Shared.Models
+
+<PageTitle>Google Clone</PageTitle>
+
+<div class="row d-flex justify-content-center">
+    <div class="col-sm-6">
+        <h1 class="display-3 text-center">Google Clone</h1>
+            <SearchForm NewSearch="SearchParam" SubmitValidForm="Search" />
+    </div>
+</div>
+
+@code
+{
+    public SearchDto SearchParam { get; set; } = new SearchDto();
+    public bool HideButtons = true;
+
+    async Task Search()
+    {
+        NavigationManager.NavigateTo($"/search/{SearchParam.searchKey}");
+    }
+}
